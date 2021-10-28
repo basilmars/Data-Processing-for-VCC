@@ -1,0 +1,307 @@
+
+Sub VCC_Calculate()
+' Calculates threshold times for use with the Virtual Colony Count (VCC) antibacterial assay.
+' Input is the kinetic absorbance output of a Tecan Infinite M1000 plate reader.
+' Output is reformatted to be arranged like a 96-well plate
+' Further calculations to calculate virtual survival and virtual lethal doses are done using Excel spreadsheets
+
+Threshold = 0.02
+  Sheets("raw").Select
+a = 0
+b = 0
+
+' Convert reported time from seconds into minutes
+
+For b = 1 To 145
+Cells(149 + b, 1) = (Cells(38, b + 1) / 60)
+Next b
+
+' Reformat the spreadsheet to look like the Vmax format, with kinetic data in columns rather than rows
+
+' Copy well labels
+
+For a = 1 To 96
+Cells(149, a + 1) = Cells(39 + a, 1)
+Next a
+
+
+For a = 1 To 96
+For b = 1 To 145
+
+' Subtract the absorbance at the first time point from the subsequent readings in that well
+
+Cells(149 + b, a + 1) = (Cells(39 + a, b + 1) - Cells(39 + a, 2))
+
+' Compute threshold time values
+
+If Cells(149 + b, a + 1) = Threshold And (Cells(146, a + 1) = "") Then
+    Cells(148, a + 1) = Cells(149 + b, a + 1)
+    Cells(146, a + 1) = Cells(149 + b, 1)
+End If
+If Cells(149 + b, a + 1) > Threshold And (Cells(146, a + 1) = "") Then
+                        over = Cells(149 + b, a + 1)
+                        overlog = Log(over)
+                        under = Cells(148 + b, a + 1)
+                        If under <= 0 Then under = 1E-22
+                        underlog = Log(under)
+                        overtime = Cells(149 + b, 1)
+                        undertime = Cells(148 + b, 1)
+                        diftime = ((overtime - undertime) * (over - Threshold)) / (over - under)
+                        diftimelog = ((overtime - undertime) * (overlog - Log(Threshold))) / (overlog - underlog)
+                        ThresholdTimeLin = overtime - diftime
+                        ThresholdTimeLog = overtime - diftimelog
+                        
+                        Cells(146, a + 1) = ThresholdTimeLog
+                        End If
+                        
+' If the absorbance did not reach the threshold,
+Next b
+If Cells(146, a + 1) = "" Then Cells(146, a + 1) = ">720"
+Next a
+
+' Reorganize threshold times into 96-well format
+
+ Range("B146:M146").Select
+    Application.CutCopyMode = False
+    Selection.Copy
+    Range("B136").Select
+    ActiveWindow.SmallScroll Down:=-7
+    ActiveSheet.Paste
+    Range("N146:Y146").Select
+    Application.CutCopyMode = False
+    Selection.Copy
+    ActiveWindow.ScrollColumn = 5
+    ActiveWindow.ScrollColumn = 4
+    ActiveWindow.ScrollColumn = 3
+    ActiveWindow.ScrollColumn = 2
+    ActiveWindow.ScrollColumn = 1
+    Range("B137").Select
+    ActiveSheet.Paste
+    ActiveWindow.SmallScroll ToRight:=12
+    Range("Z146:AK146").Select
+    Application.CutCopyMode = False
+    Selection.Copy
+    ActiveWindow.ScrollColumn = 18
+    ActiveWindow.ScrollColumn = 17
+    ActiveWindow.ScrollColumn = 15
+    ActiveWindow.ScrollColumn = 14
+    ActiveWindow.ScrollColumn = 13
+    ActiveWindow.ScrollColumn = 12
+    ActiveWindow.ScrollColumn = 11
+    ActiveWindow.ScrollColumn = 10
+    ActiveWindow.ScrollColumn = 9
+    ActiveWindow.ScrollColumn = 8
+    ActiveWindow.ScrollColumn = 7
+    ActiveWindow.ScrollColumn = 5
+    ActiveWindow.ScrollColumn = 4
+    ActiveWindow.ScrollColumn = 3
+    ActiveWindow.ScrollColumn = 2
+    ActiveWindow.ScrollColumn = 1
+    Range("B138").Select
+    ActiveSheet.Paste
+    ActiveWindow.SmallScroll ToRight:=25
+    Range("AL146:AW146").Select
+    Application.CutCopyMode = False
+    Selection.Copy
+    ActiveWindow.LargeScroll ToRight:=-1
+    ActiveWindow.ScrollColumn = 9
+    ActiveWindow.ScrollColumn = 8
+    ActiveWindow.ScrollColumn = 6
+    ActiveWindow.ScrollColumn = 5
+    ActiveWindow.ScrollColumn = 4
+    ActiveWindow.ScrollColumn = 1
+    Range("B139").Select
+    ActiveSheet.Paste
+    ActiveWindow.LargeScroll ToRight:=2
+    Range("AX146:BI146").Select
+    Application.CutCopyMode = False
+    Selection.Copy
+    ActiveWindow.ScrollColumn = 42
+    ActiveWindow.ScrollColumn = 41
+    ActiveWindow.ScrollColumn = 40
+    ActiveWindow.ScrollColumn = 39
+    ActiveWindow.ScrollColumn = 36
+    ActiveWindow.ScrollColumn = 34
+    ActiveWindow.ScrollColumn = 33
+    ActiveWindow.ScrollColumn = 31
+    ActiveWindow.ScrollColumn = 27
+    ActiveWindow.ScrollColumn = 26
+    ActiveWindow.ScrollColumn = 24
+    ActiveWindow.ScrollColumn = 20
+    ActiveWindow.ScrollColumn = 18
+    ActiveWindow.ScrollColumn = 17
+    ActiveWindow.ScrollColumn = 16
+    ActiveWindow.ScrollColumn = 15
+    ActiveWindow.ScrollColumn = 12
+    ActiveWindow.ScrollColumn = 11
+    ActiveWindow.ScrollColumn = 9
+    ActiveWindow.ScrollColumn = 5
+    ActiveWindow.ScrollColumn = 4
+    ActiveWindow.ScrollColumn = 2
+    ActiveWindow.ScrollColumn = 1
+    Range("B140").Select
+    ActiveSheet.Paste
+    ActiveWindow.LargeScroll ToRight:=2
+    ActiveWindow.ScrollColumn = 42
+    ActiveWindow.ScrollColumn = 43
+    ActiveWindow.ScrollColumn = 44
+    ActiveWindow.ScrollColumn = 45
+    ActiveWindow.ScrollColumn = 46
+    ActiveWindow.ScrollColumn = 47
+    ActiveWindow.ScrollColumn = 48
+    ActiveWindow.ScrollColumn = 49
+    ActiveWindow.ScrollColumn = 50
+    ActiveWindow.ScrollColumn = 51
+    ActiveWindow.ScrollColumn = 52
+    Range("BJ146:BU146").Select
+    Application.CutCopyMode = False
+    Selection.Copy
+    Range("BR131:BS145").Select
+    Range("BS131").Activate
+    ActiveWindow.ScrollColumn = 54
+    ActiveWindow.ScrollColumn = 53
+    ActiveWindow.ScrollColumn = 52
+    ActiveWindow.ScrollColumn = 50
+    ActiveWindow.ScrollColumn = 49
+    ActiveWindow.ScrollColumn = 45
+    ActiveWindow.ScrollColumn = 43
+    ActiveWindow.ScrollColumn = 40
+    ActiveWindow.ScrollColumn = 39
+    ActiveWindow.ScrollColumn = 34
+    ActiveWindow.ScrollColumn = 32
+    ActiveWindow.ScrollColumn = 31
+    ActiveWindow.ScrollColumn = 30
+    ActiveWindow.ScrollColumn = 27
+    ActiveWindow.ScrollColumn = 26
+    ActiveWindow.ScrollColumn = 25
+    ActiveWindow.ScrollColumn = 23
+    ActiveWindow.ScrollColumn = 22
+    ActiveWindow.ScrollColumn = 21
+    ActiveWindow.ScrollColumn = 20
+    ActiveWindow.ScrollColumn = 17
+    ActiveWindow.ScrollColumn = 16
+    ActiveWindow.ScrollColumn = 15
+    ActiveWindow.ScrollColumn = 12
+    ActiveWindow.ScrollColumn = 10
+    ActiveWindow.ScrollColumn = 9
+    ActiveWindow.ScrollColumn = 7
+    ActiveWindow.ScrollColumn = 3
+    ActiveWindow.ScrollColumn = 2
+    ActiveWindow.ScrollColumn = 1
+    Range("B141").Select
+    ActiveSheet.Paste
+    ActiveWindow.LargeScroll ToRight:=3
+    Range("BV146:CG146").Select
+    Application.CutCopyMode = False
+    Selection.Copy
+    ActiveWindow.ScrollColumn = 70
+    ActiveWindow.ScrollColumn = 69
+    ActiveWindow.ScrollColumn = 68
+    ActiveWindow.ScrollColumn = 67
+    ActiveWindow.ScrollColumn = 64
+    ActiveWindow.ScrollColumn = 63
+    ActiveWindow.ScrollColumn = 61
+    ActiveWindow.ScrollColumn = 55
+    ActiveWindow.ScrollColumn = 53
+    ActiveWindow.ScrollColumn = 50
+    ActiveWindow.ScrollColumn = 38
+    ActiveWindow.ScrollColumn = 34
+    ActiveWindow.ScrollColumn = 30
+    ActiveWindow.ScrollColumn = 21
+    ActiveWindow.ScrollColumn = 19
+    ActiveWindow.ScrollColumn = 18
+    ActiveWindow.ScrollColumn = 17
+    ActiveWindow.ScrollColumn = 15
+    ActiveWindow.ScrollColumn = 14
+    ActiveWindow.ScrollColumn = 13
+    ActiveWindow.ScrollColumn = 9
+    ActiveWindow.ScrollColumn = 7
+    ActiveWindow.ScrollColumn = 6
+    ActiveWindow.ScrollColumn = 5
+    ActiveWindow.ScrollColumn = 3
+    ActiveWindow.ScrollColumn = 2
+    ActiveWindow.ScrollColumn = 1
+    Range("B142").Select
+    ActiveSheet.Paste
+    ActiveWindow.LargeScroll ToRight:=3
+    ActiveWindow.ScrollColumn = 62
+    ActiveWindow.ScrollColumn = 63
+    ActiveWindow.ScrollColumn = 64
+    ActiveWindow.ScrollColumn = 65
+    ActiveWindow.ScrollColumn = 66
+    ActiveWindow.ScrollColumn = 67
+    ActiveWindow.ScrollColumn = 68
+    ActiveWindow.ScrollColumn = 69
+    ActiveWindow.ScrollColumn = 70
+    ActiveWindow.ScrollColumn = 71
+    ActiveWindow.ScrollColumn = 73
+    ActiveWindow.ScrollColumn = 74
+    ActiveWindow.ScrollColumn = 75
+    ActiveWindow.ScrollColumn = 76
+    ActiveWindow.ScrollColumn = 77
+    ActiveWindow.ScrollColumn = 78
+    Range("CH146:CS146").Select
+    Application.CutCopyMode = False
+    Selection.Copy
+    ActiveWindow.ScrollColumn = 76
+    ActiveWindow.ScrollColumn = 74
+    ActiveWindow.ScrollColumn = 72
+    ActiveWindow.ScrollColumn = 64
+    ActiveWindow.ScrollColumn = 60
+    ActiveWindow.ScrollColumn = 57
+    ActiveWindow.ScrollColumn = 45
+    ActiveWindow.ScrollColumn = 42
+    ActiveWindow.ScrollColumn = 39
+    ActiveWindow.ScrollColumn = 33
+    ActiveWindow.ScrollColumn = 31
+    ActiveWindow.ScrollColumn = 30
+    ActiveWindow.ScrollColumn = 29
+    ActiveWindow.ScrollColumn = 27
+    ActiveWindow.ScrollColumn = 26
+    ActiveWindow.ScrollColumn = 25
+    ActiveWindow.ScrollColumn = 20
+    ActiveWindow.ScrollColumn = 19
+    ActiveWindow.ScrollColumn = 16
+    ActiveWindow.ScrollColumn = 14
+    ActiveWindow.ScrollColumn = 8
+    ActiveWindow.ScrollColumn = 7
+    ActiveWindow.ScrollColumn = 5
+    ActiveWindow.ScrollColumn = 4
+    ActiveWindow.ScrollColumn = 3
+    ActiveWindow.ScrollColumn = 2
+    ActiveWindow.ScrollColumn = 1
+    Range("B143").Select
+    ActiveSheet.Paste
+    
+    Cells(144, 2) = "1"
+    Cells(144, 3) = "2"
+    Cells(144, 4) = "3"
+    Cells(144, 5) = "4"
+    Cells(144, 6) = "5"
+    Cells(144, 7) = "6"
+    Cells(144, 8) = "7"
+    Cells(144, 9) = "8"
+    Cells(144, 10) = "9"
+    Cells(144, 11) = "10"
+    Cells(144, 12) = "11"
+    Cells(144, 13) = "12"
+    Cells(136, 1) = "A"
+    Cells(137, 1) = "B"
+    Cells(138, 1) = "C"
+    Cells(139, 1) = "D"
+    Cells(140, 1) = "E"
+    Cells(141, 1) = "F"
+    Cells(142, 1) = "G"
+    Cells(143, 1) = "H"
+    
+    
+    Cells(146, 1) = "threshold time"
+    
+    
+    
+ ActiveWindow.ScrollRow = 136 ' Automatically selects the data arranged in 96-well format and copies it, to be pasted into a summary spreadsheet
+    Range("b136:m143").Select
+    Selection.Copy
+
+
+End Sub
